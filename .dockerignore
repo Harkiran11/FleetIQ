@@ -19,6 +19,7 @@ mlruns
 mlflow.db
 models_test
 models_test_ml
+models/*/runs
 docs
 tests
 .github
