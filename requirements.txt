@@ -1,0 +1,40 @@
+# FleetIQ runtime dependencies.
+#
+# Versions are pinned to the environment used to build the committed model
+# bundles and the screenshots in docs/. Python 3.13 is the reference runtime;
+# the code also targets 3.11+.
+#
+# Install with:
+#   python -m pip install -r requirements.txt
+# or, when using uv:
+#   uv pip install --python .venv/bin/python -r requirements.txt
+
+# --- Web service -----------------------------------------------------------
+fastapi==0.150.0
+uvicorn[standard]==0.54.0
+gunicorn==26.2.0
+python-multipart==0.0.32
+
+# --- Contracts and configuration ------------------------------------------
+pydantic==2.14.2
+pydantic-settings==2.16.2
+python-dotenv==1.2.4
+
+# --- Data and persistence --------------------------------------------------
+SQLAlchemy==2.1.6
+psycopg[binary]==3.3.6
+pandas==3.1.0
+numpy==2.5.4
+pyarrow==25.0.1
+
+# --- Modelling and tracking ------------------------------------------------
+scikit-learn==1.9.1
+joblib==1.6.0
+mlflow==3.17.2
+
+# --- Orchestration and reporting ------------------------------------------
+prefect==3.9.1
+matplotlib==3.11.2
+
+# --- Optional cloud artefact sync -----------------------------------------
+boto3==1.43.123

@@ -1,0 +1,112 @@
+name: fleetiq
+
+# Local production-shaped stack:
+#   postgres  relational warehouse
+#   mlflow    tracking server + model registry (Postgres backend)
+#   api       FastAPI + Gunicorn, serves the dashboard at http://localhost:8000
+#   init      optional one-shot ingest + training job (`--profile bootstrap`)
+#
+# First run:
+#   docker compose up --build
+# The API entrypoint ingests data/raw into Postgres when the warehouse is empty.
+#
+# Retrain and promote inside the stack:
+#   docker compose run --rm init
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fleetiq
+      POSTGRES_PASSWORD: fleetiq
+      POSTGRES_DB: fleetiq
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fleetiq -d fleetiq"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mlflow:
+    build: .
+    entrypoint: []
+    command:
+      - mlflow
+      - server
+      - --host=0.0.0.0
+      - --port=5000
+      - --backend-store-uri=postgresql+psycopg://fleetiq:fleetiq@postgres:5432/fleetiq
+      - --default-artifact-root=/mlartifacts
+    environment:
+      MLFLOW_DISABLE_AGENT_HINT: "1"
+    volumes:
+      - mlartifacts:/mlartifacts
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  api:
+    build: .
+    environment:
+      APP_ENV: docker
+      DATABASE_URL: postgresql+psycopg://fleetiq:fleetiq@postgres:5432/fleetiq
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MODEL_SOURCE: local
+      PREDICTION_LOG_ENABLED: "true"
+      FLEETIQ_SKIP_BOOTSTRAP: "0"
+    volumes:
+      - ./data/raw:/app/data/raw:ro
+      - mlartifacts:/mlartifacts:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+
+  init:
+    build: .
+    profiles: ["bootstrap"]
+    entrypoint: []
+    # Run as root so the bind-mounted ./models directory is writable on Linux
+    # hosts where the container UID differs from the host user.
+    user: root
+    command: >
+      sh -c "python -m src.cli ingest --force &&
+             python -m src.cli train --model all"
+    environment:
+      APP_ENV: docker
+      DATABASE_URL: postgresql+psycopg://fleetiq:fleetiq@postgres:5432/fleetiq
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MODEL_SOURCE: local
+    volumes:
+      - ./data/raw:/app/data/raw:ro
+      - ./models:/app/models
+      - mlartifacts:/mlartifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  mlartifacts:

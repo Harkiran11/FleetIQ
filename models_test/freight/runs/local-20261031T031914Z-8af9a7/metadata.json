@@ -1,0 +1,523 @@
+{
+  "model_key": "freight",
+  "model_name": "fleetiq-freight-pricing",
+  "title": "FleetIQ Freight Pricing",
+  "run_id": "local-20261031T031914Z-8af9a7",
+  "trained_at": "2026-10-31T03:19:14.513882+00:00",
+  "reference_year": 2025,
+  "training_rows": 170,
+  "validation_rows": 36,
+  "test_rows": 37,
+  "feature_columns": [
+    "weight_kg",
+    "distance_miles",
+    "month",
+    "day_of_week",
+    "day_of_year",
+    "is_weekend",
+    "weight_per_mile",
+    "origin_warehouse",
+    "destination",
+    "carrier",
+    "lane",
+    "distance_band",
+    "weight_band"
+  ],
+  "numeric_features": [
+    "weight_kg",
+    "distance_miles",
+    "month",
+    "day_of_week",
+    "day_of_year",
+    "is_weekend",
+    "weight_per_mile"
+  ],
+  "categorical_features": [
+    "origin_warehouse",
+    "destination",
+    "carrier",
+    "lane",
+    "distance_band",
+    "weight_band"
+  ],
+  "excluded_columns": [
+    "shipment_id",
+    "delivery_date",
+    "status",
+    "transit_days",
+    "cost"
+  ],
+  "metrics": {
+    "mae": 25.694027229215123,
+    "medae": 18.134580643916962,
+    "rmse": 37.5529362193608,
+    "mape": 12.993526685931176,
+    "r2": 0.870200386849934,
+    "coverage_90": 0.7837837837837838,
+    "baseline_mae": 38.07469827739048,
+    "baseline_mape": 20.052103989782445
+  },
+  "params": {
+    "loss": "absolute_error",
+    "max_iter": 500,
+    "learning_rate": 0.05,
+    "max_leaf_nodes": 31,
+    "l2_regularization": 1.0,
+    "early_stopping": true,
+    "train_rows": 170,
+    "validation_rows": 36,
+    "test_rows": 37,
+    "feature_count": 13
+  },
+  "segments": {
+    "carrier": [
+      {
+        "segment": "FedEx",
+        "rows": 9,
+        "mae": 31.90749455986561,
+        "mape": 17.664084559743625,
+        "mean_actual": 256.06333333333333,
+        "mean_predicted": 247.86378846752729
+      },
+      {
+        "segment": "OnTrac",
+        "rows": 7,
+        "mae": 21.57069376489586,
+        "mape": 10.220547759874588,
+        "mean_actual": 219.10857142857142,
+        "mean_predicted": 197.56661141751994
+      },
+      {
+        "segment": "Amazon Logistics",
+        "rows": 6,
+        "mae": 16.44304219945991,
+        "mape": 9.535440965219903,
+        "mean_actual": 202.00666666666666,
+        "mean_predicted": 218.14824189686837
+      },
+      {
+        "segment": "LaserShip",
+        "rows": 5,
+        "mae": 25.111973393632436,
+        "mape": 14.614774217168385,
+        "mean_actual": 167.95600000000002,
+        "mean_predicted": 179.15408802919495
+      },
+      {
+        "segment": "USPS",
+        "rows": 4,
+        "mae": 13.911075167844707,
+        "mape": 7.798376853075059,
+        "mean_actual": 205.57500000000002,
+        "mean_predicted": 201.25428724210175
+      },
+      {
+        "segment": "DHL",
+        "rows": 3,
+        "mae": 36.820817665733536,
+        "mape": 10.387175059306331,
+        "mean_actual": 342.55999999999995,
+        "mean_predicted": 305.73918233426645
+      },
+      {
+        "segment": "UPS",
+        "rows": 3,
+        "mae": 40.73060875146566,
+        "mape": 19.199447518419433,
+        "mean_actual": 192.04666666666665,
+        "mean_predicted": 151.31605791520101
+      }
+    ],
+    "distance_band": [
+      {
+        "segment": "1500-2500",
+        "rows": 17,
+        "mae": 29.442623029565716,
+        "mape": 8.998644844083813,
+        "mean_actual": 314.1723529411765,
+        "mean_predicted": 309.8302273400311
+      },
+      {
+        "segment": "1000-1500",
+        "rows": 8,
+        "mae": 25.732824893946653,
+        "mape": 12.126724661233853,
+        "mean_actual": 204.60875000000001,
+        "mean_predicted": 194.37276433525437
+      },
+      {
+        "segment": "500-1000",
+        "rows": 5,
+        "mae": 35.20721914970725,
+        "mape": 17.91157522644769,
+        "mean_actual": 173.98399999999998,
+        "mean_predicted": 138.77678085029277
+      },
+      {
+        "segment": "<250",
+        "rows": 5,
+        "mae": 11.437699974950771,
+        "mape": 25.371625247202907,
+        "mean_actual": 66.04400000000001,
+        "mean_predicted": 70.22786771738399
+      },
+      {
+        "segment": "250-500",
+        "rows": 2,
+        "mae": 5.533610601739575,
+        "mape": 7.176862685952487,
+        "mean_actual": 69.165,
+        "mean_predicted": 63.73195753671564
+      }
+    ]
+  },
+  "global_importance": [
+    {
+      "feature": "distance_miles",
+      "importance": 88.04157561461632
+    },
+    {
+      "feature": "weight_kg",
+      "importance": 8.92468219818272
+    },
+    {
+      "feature": "carrier",
+      "importance": 3.696517746640255
+    },
+    {
+      "feature": "weight_per_mile",
+      "importance": 1.033428749501136
+    },
+    {
+      "feature": "day_of_year",
+      "importance": 0.5051567883752874
+    },
+    {
+      "feature": "distance_band",
+      "importance": 0.40847401860744553
+    },
+    {
+      "feature": "month",
+      "importance": 0.3084671103396147
+    },
+    {
+      "feature": "day_of_week",
+      "importance": 0.07282287746229273
+    },
+    {
+      "feature": "is_weekend",
+      "importance": 0.0
+    },
+    {
+      "feature": "origin_warehouse",
+      "importance": 0.0
+    },
+    {
+      "feature": "destination",
+      "importance": 0.0
+    },
+    {
+      "feature": "lane",
+      "importance": 0.0
+    },
+    {
+      "feature": "weight_band",
+      "importance": 0.0
+    }
+  ],
+  "residual_quantiles": {
+    "0.8": 20.12355492398075,
+    "0.9": 33.0806966040557,
+    "0.95": 40.966894270813484
+  },
+  "dataset": {
+    "source": "logistics_shipments_dataset.csv",
+    "fingerprint": "349ebd20925f9e43",
+    "target": "cost"
+  },
+  "mlflow": {
+    "tracking_uri": "sqlite:///./mlflow.db",
+    "experiment": "fleetiq-freight-pricing",
+    "registered_model": "fleetiq-freight-pricing",
+    "version": null
+  },
+  "intended_use": "Produce a booking-time freight quote and a calibrated 90% cost interval for a lane.",
+  "limitations": "Freight cost is heavy-tailed. The point model optimises absolute error, so R2 is low while MAE and MAPE are the useful operational metrics. The 90% interval is a split-conformal estimate and assumes future shipments resemble the 2023 US lane mix.",
+  "error_analysis": [
+    {
+      "shipment_id": "SH10366",
+      "origin_warehouse": "Warehouse_BOS",
+      "destination": "Boston",
+      "carrier": "FedEx",
+      "distance_miles": 2247.0,
+      "weight_kg": 55.1,
+      "actual_cost": 474.36,
+      "predicted_cost": 357.87515484469,
+      "absolute_error": 116.48484515531004
+    },
+    {
+      "shipment_id": "SH10862",
+      "origin_warehouse": "Warehouse_MIA",
+      "destination": "Houston",
+      "carrier": "OnTrac",
+      "distance_miles": 547.0,
+      "weight_kg": 139.3,
+      "actual_cost": 235.27,
+      "predicted_cost": 122.16171533312861,
+      "absolute_error": 113.1082846668714
+    },
+    {
+      "shipment_id": "SH10049",
+      "origin_warehouse": "Warehouse_MIA",
+      "destination": "Boston",
+      "carrier": "UPS",
+      "distance_miles": 1010.0,
+      "weight_kg": 84.1,
+      "actual_cost": 251.24,
+      "predicted_cost": 171.3615900254433,
+      "absolute_error": 79.87840997455672
+    },
+    {
+      "shipment_id": "SH11487",
+      "origin_warehouse": "Warehouse_BOS",
+      "destination": "Minneapolis",
+      "carrier": "DHL",
+      "distance_miles": 2300.0,
+      "weight_kg": 17.8,
+      "actual_cost": 407.33,
+      "predicted_cost": 352.2445259184302,
+      "absolute_error": 55.08547408156977
+    },
+    {
+      "shipment_id": "SH10247",
+      "origin_warehouse": "Warehouse_LA",
+      "destination": "New York",
+      "carrier": "LaserShip",
+      "distance_miles": 2074.0,
+      "weight_kg": 3.6,
+      "actual_cost": 230.21,
+      "predicted_cost": 283.86012387303583,
+      "absolute_error": 53.650123873035824
+    },
+    {
+      "shipment_id": "SH11819",
+      "origin_warehouse": "Warehouse_BOS",
+      "destination": "Denver",
+      "carrier": "DHL",
+      "distance_miles": 1724.0,
+      "weight_kg": 35.3,
+      "actual_cost": 314.52,
+      "predicted_cost": 262.5913427149759,
+      "absolute_error": 51.92865728502409
+    },
+    {
+      "shipment_id": "SH10237",
+      "origin_warehouse": "Warehouse_NYC",
+      "destination": "Seattle",
+      "carrier": "USPS",
+      "distance_miles": 2172.0,
+      "weight_kg": 85.5,
+      "actual_cost": 345.35,
+      "predicted_cost": 308.8864241485141,
+      "absolute_error": 36.46357585148593
+    },
+    {
+      "shipment_id": "SH11884",
+      "origin_warehouse": "Warehouse_CHI",
+      "destination": "Minneapolis",
+      "carrier": "Amazon Logistics",
+      "distance_miles": 2247.0,
+      "weight_kg": 40.7,
+      "actual_cost": 292.44,
+      "predicted_cost": 326.21334114364845,
+      "absolute_error": 33.77334114364845
+    },
+    {
+      "shipment_id": "SH10617",
+      "origin_warehouse": "Warehouse_ATL",
+      "destination": "Denver",
+      "carrier": "Amazon Logistics",
+      "distance_miles": 2253.0,
+      "weight_kg": 37.7,
+      "actual_cost": 286.4,
+      "predicted_cost": 317.5770002644963,
+      "absolute_error": 31.177000264496314
+    },
+    {
+      "shipment_id": "SH10611",
+      "origin_warehouse": "Warehouse_HOU",
+      "destination": "Dallas",
+      "carrier": "FedEx",
+      "distance_miles": 1113.0,
+      "weight_kg": 58.1,
+      "actual_cost": 217.03,
+      "predicted_cost": 187.7945672635408,
+      "absolute_error": 29.235432736459188
+    },
+    {
+      "shipment_id": "SH11107",
+      "origin_warehouse": "Warehouse_SEA",
+      "destination": "Portland",
+      "carrier": "FedEx",
+      "distance_miles": 1899.0,
+      "weight_kg": 12.6,
+      "actual_cost": 291.61,
+      "predicted_cost": 319.77197509595396,
+      "absolute_error": 28.16197509595395
+    },
+    {
+      "shipment_id": "SH10297",
+      "origin_warehouse": "Warehouse_HOU",
+      "destination": "Portland",
+      "carrier": "FedEx",
+      "distance_miles": 1218.0,
+      "weight_kg": 21.8,
+      "actual_cost": 204.43,
+      "predicted_cost": 177.3007640842422,
+      "absolute_error": 27.129235915757818
+    },
+    {
+      "shipment_id": "SH10572",
+      "origin_warehouse": "Warehouse_SF",
+      "destination": "Atlanta",
+      "carrier": "UPS",
+      "distance_miles": 962.0,
+      "weight_kg": 58.4,
+      "actual_cost": 196.37,
+      "predicted_cost": 169.8940115252453,
+      "absolute_error": 26.4759884747547
+    },
+    {
+      "shipment_id": "SH11813",
+      "origin_warehouse": "Warehouse_SEA",
+      "destination": "San Francisco",
+      "carrier": "FedEx",
+      "distance_miles": 2126.0,
+      "weight_kg": 16.6,
+      "actual_cost": 285.36,
+      "predicted_cost": 309.40363487600473,
+      "absolute_error": 24.043634876004717
+    },
+    {
+      "shipment_id": "SH11623",
+      "origin_warehouse": "Warehouse_DEN",
+      "destination": "Miami",
+      "carrier": "Amazon Logistics",
+      "distance_miles": 1237.0,
+      "weight_kg": 15.3,
+      "actual_cost": 157.36,
+      "predicted_cost": 180.059748928861,
+      "absolute_error": 22.699748928861
+    },
+    {
+      "shipment_id": "SH10270",
+      "origin_warehouse": "Warehouse_DEN",
+      "destination": "Phoenix",
+      "carrier": "FedEx",
+      "distance_miles": 159.0,
+      "weight_kg": 4.9,
+      "actual_cost": 27.41,
+      "predicted_cost": 47.81731361505164,
+      "absolute_error": 20.40731361505164
+    },
+    {
+      "shipment_id": "SH10679",
+      "origin_warehouse": "Warehouse_BOS",
+      "destination": "Miami",
+      "carrier": "FedEx",
+      "distance_miles": 2185.0,
+      "weight_kg": 6.5,
+      "actual_cost": 297.79,
+      "predicted_cost": 317.56632652243326,
+      "absolute_error": 19.776326522433237
+    },
+    {
+      "shipment_id": "SH10670",
+      "origin_warehouse": "Warehouse_BOS",
+      "destination": "New York",
+      "carrier": "LaserShip",
+      "distance_miles": 1431.0,
+      "weight_kg": 28.1,
+      "actual_cost": 192.15,
+      "predicted_cost": 211.6062815963086,
+      "absolute_error": 19.4562815963086
+    },
+    {
+      "shipment_id": "SH10383",
+      "origin_warehouse": "Warehouse_SF",
+      "destination": "Chicago",
+      "carrier": "LaserShip",
+      "distance_miles": 242.0,
+      "weight_kg": 75.4,
+      "actual_cost": 109.7,
+      "predicted_cost": 91.56541935608304,
+      "absolute_error": 18.134580643916962
+    },
+    {
+      "shipment_id": "SH10544",
+      "origin_warehouse": "Warehouse_ATL",
+      "destination": "Phoenix",
+      "carrier": "LaserShip",
+      "distance_miles": 1288.0,
+      "weight_kg": 22.8,
+      "actual_cost": 184.9,
+      "predicted_cost": 202.56874808772406,
+      "absolute_error": 17.668748087724055
+    },
+    {
+      "shipment_id": "SH11608",
+      "origin_warehouse": "Warehouse_MIA",
+      "destination": "Portland",
+      "carrier": "LaserShip",
+      "distance_miles": 594.0,
+      "weight_kg": 30.1,
+      "actual_cost": 122.82,
+      "predicted_cost": 106.16986723282325,
+      "absolute_error": 16.650132767176743
+    },
+    {
+      "shipment_id": "SH10063",
+      "origin_warehouse": "Warehouse_BOS",
+      "destination": "Los Angeles",
+      "carrier": "UPS",
+      "distance_miles": 740.0,
+      "weight_kg": 25.6,
+      "actual_cost": 128.53,
+      "predicted_cost": 112.69257219491443,
+      "absolute_error": 15.837427805085568
+    },
+    {
+      "shipment_id": "SH10111",
+      "origin_warehouse": "Warehouse_SF",
+      "destination": "New York",
+      "carrier": "FedEx",
+      "distance_miles": 1810.0,
+      "weight_kg": 19.2,
+      "actual_cost": 273.26,
+      "predicted_cost": 287.5565235138245,
+      "absolute_error": 14.296523513824525
+    },
+    {
+      "shipment_id": "SH10289",
+      "origin_warehouse": "Warehouse_HOU",
+      "destination": "Los Angeles",
+      "carrier": "OnTrac",
+      "distance_miles": 2444.0,
+      "weight_kg": 38.5,
+      "actual_cost": 330.97,
+      "predicted_cost": 317.7987335972213,
+      "absolute_error": 13.171266402778713
+    },
+    {
+      "shipment_id": "SH11847",
+      "origin_warehouse": "Warehouse_MIA",
+      "destination": "Detroit",
+      "carrier": "OnTrac",
+      "distance_miles": 464.0,
+      "weight_kg": 12.6,
+      "actual_cost": 77.29,
+      "predicted_cost": 66.32334693497607,
+      "absolute_error": 10.966653065023934
+    }
+  ]
+}

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FleetIQ — MLOps control room</title>
+  <meta name="description" content="Maintenance risk scoring and freight pricing for a logistics fleet, with drift monitoring and model feedback." />
+  <meta name="theme-color" content="#0e1b20" />
+  <link rel="preload" href="/static/assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/static/assets/fonts/fraunces-italic.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/static/assets/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/static/assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M4 30h24v8H4z" fill="none" stroke="currentColor" stroke-width="2.2"/>
+          <path d="M28 22h9l7 8v8H28z" fill="none" stroke="currentColor" stroke-width="2.2"/>
+          <circle cx="13" cy="38" r="4" fill="var(--paper)" stroke="currentColor" stroke-width="2.2"/>
+          <circle cx="35" cy="38" r="4" fill="var(--paper)" stroke="currentColor" stroke-width="2.2"/>
+          <path d="M8 22c8-9 17-9 26 0" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="21" cy="17" r="2.6" fill="var(--accent)"/>
+        </svg>
+        <div>
+          <div class="wordmark">Fleet<span>IQ</span></div>
+          <div class="tagline">MLOps control room</div>
+        </div>
+      </div>
+
+      <div class="status-rail" aria-label="Service status">
+        <span class="status" id="status-api"><i></i> API</span>
+        <span class="status" id="status-db"><i></i> Warehouse</span>
+        <span class="status" id="status-models"><i></i> Models</span>
+        <span class="status status-version" id="status-version">v1.0.0</span>
+        <button class="icon-button" id="refresh-all" title="Refresh data" aria-label="Refresh all data">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 6.3M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab is-active" data-tab="overview"><span>01</span> Overview</button>
+      <button class="tab" data-tab="maintenance"><span>02</span> Maintenance risk</button>
+      <button class="tab" data-tab="freight"><span>03</span> Freight quote</button>
+      <button class="tab" data-tab="priority"><span>04</span> Priority queue</button>
+      <button class="tab" data-tab="monitoring"><span>05</span> Monitoring</button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- OVERVIEW -->
+    <section class="panel is-active" id="panel-overview" aria-labelledby="overview-title">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Fleet operations · two models, one picture</p>
+          <h1 id="overview-title">Know what needs a bay<br /><em>before</em> it needs a tow.</h1>
+          <p class="lede">
+            FleetIQ scores maintenance risk from live telemetry and quotes freight at booking time.
+            Every prediction is logged, monitored for drift, and tied back to an observed outcome.
+          </p>
+          <div class="hero-actions">
+            <button class="button primary" data-goto="maintenance">Score a vehicle</button>
+            <button class="button ghost" data-goto="monitoring">Open monitoring</button>
+          </div>
+        </div>
+        <aside class="hero-board" aria-label="Headline metrics">
+          <div class="board-head"><span>Live board</span><span class="pulse"></span></div>
+          <div class="board-stat"><span class="board-label">Vehicles scored</span><strong id="hero-fleet">—</strong></div>
+          <div class="board-stat"><span class="board-label">Maintenance rate</span><strong id="hero-rate">—</strong></div>
+          <div class="board-stat"><span class="board-label">Freight MAPE</span><strong id="hero-mape">—</strong></div>
+          <div class="board-stat"><span class="board-label">Maintenance ROC AUC</span><strong id="hero-auc">—</strong></div>
+          <p class="board-note" id="hero-note">Loading the warehouse…</p>
+        </aside>
+      </div>
+
+      <div class="kpi-grid" id="kpi-grid" aria-live="polite"></div>
+
+      <div class="grid two">
+        <article class="card chart-card">
+          <div class="card-head">
+            <div><p class="eyebrow">Fleet composition</p><h2>Risk by vehicle type</h2></div>
+            <span class="card-tag">share due</span>
+          </div>
+          <div id="segments-chart" class="chart-slot"></div>
+        </article>
+
+        <article class="card chart-card">
+          <div class="card-head">
+            <div><p class="eyebrow">Service history</p><h2>Monthly service volume</h2></div>
+            <span class="card-tag">events · risk</span>
+          </div>
+          <div id="trend-chart" class="chart-slot"></div>
+        </article>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <div class="card-head">
+            <div><p class="eyebrow">Inspection signal</p><h2>Brake condition</h2></div>
+          </div>
+          <div id="brake-cards" class="stack"></div>
+        </article>
+
+        <article class="card chart-card">
+          <div class="card-head">
+            <div><p class="eyebrow">Freight economics</p><h2>Average cost by carrier</h2></div>
+            <span class="card-tag">USD</span>
+          </div>
+          <div id="carrier-chart" class="chart-slot compact"></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div><p class="eyebrow">Registry</p><h2>Promoted models</h2></div>
+            <span class="card-tag">champion</span>
+          </div>
+          <div id="registry-card" class="stack"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- MAINTENANCE -->
+    <section class="panel" id="panel-maintenance" aria-labelledby="maintenance-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Model 01 · classification</p>
+          <h1 id="maintenance-title">Maintenance risk</h1>
+          <p class="lede narrow">Enter the last known service state and current telemetry. Post-service fields such as cost, downtime and severity are deliberately excluded.</p>
+        </div>
+        <button class="button ghost small" id="load-example">Load high-risk example</button>
+      </div>
+
+      <div class="grid form-layout">
+        <form class="card form-card" id="maintenance-form" autocomplete="off">
+          <fieldset>
+            <legend>Vehicle identity</legend>
+            <div class="field-grid">
+              <label>Make and model<select id="m-make"></select></label>
+              <label>Vehicle type<select id="m-type"></select></label>
+              <label>Model year<input type="number" id="m-year" value="2018" min="1980" max="2035" /></label>
+              <label>Route<select id="m-route"></select></label>
+              <label>Weather<select id="m-weather"></select></label>
+              <label>Road conditions<select id="m-road"></select></label>
+              <label>Communication interface<select id="m-comm"></select></label>
+              <label>Telematics gateway<select id="m-gateway"></select></label>
+              <label>Edge device class<select id="m-edge"></select></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Live telemetry</legend>
+            <div class="field-grid">
+              <label>Usage hours<input type="number" id="m-usage" value="10039" min="0" step="any" /></label>
+              <label>Load capacity (kg)<input type="number" id="m-capacity" value="10000" min="1" step="any" /></label>
+              <label>Actual load (kg)<input type="number" id="m-load" value="10105" min="0" step="any" /></label>
+              <label>Fuel consumption (L/100km)<input type="number" id="m-fuel" value="14.4" min="0" step="any" /></label>
+              <label>Tire pressure (psi)<input type="number" id="m-tire" value="23.9" min="0" step="any" /></label>
+              <label>CAN message rate (Hz)<input type="number" id="m-can" value="60" min="0" step="any" /></label>
+              <label>Sensor packet loss<input type="number" id="m-packet" value="0.0196" min="0" max="1" step="any" /></label>
+              <label>Historical maintenance cost (USD)<input type="number" id="m-histcost" value="2946" min="0" step="any" /></label>
+            </div>
+
+            <div class="slider-row">
+              <label class="slider-label" for="m-temp-range">Engine temperature <output id="m-temp-out">124 °C</output></label>
+              <input type="range" id="m-temp-range" min="60" max="140" step="0.5" value="124" />
+              <input type="number" id="m-temp" value="124.3" min="-40" max="200" step="any" class="visually-hidden" tabindex="-1" />
+            </div>
+            <div class="slider-row">
+              <label class="slider-label" for="m-vibration-range">Vibration level <output id="m-vibration-out">3.3</output></label>
+              <input type="range" id="m-vibration-range" min="0" max="12" step="0.1" value="3.3" />
+              <input type="number" id="m-vibration" value="3.32" min="0" max="100" step="any" class="visually-hidden" tabindex="-1" />
+            </div>
+            <div class="slider-row">
+              <label class="slider-label" for="m-battery-range">Battery health <output id="m-battery-out">44%</output></label>
+              <input type="range" id="m-battery-range" min="0" max="100" step="1" value="44" />
+              <input type="number" id="m-battery" value="43.9" min="0" max="100" step="any" class="visually-hidden" tabindex="-1" />
+            </div>
+            <div class="slider-row">
+              <label class="slider-label" for="m-oil-range">Oil quality <output id="m-oil-out">49 / 100</output></label>
+              <input type="range" id="m-oil-range" min="0" max="100" step="1" value="49" />
+              <input type="number" id="m-oil" value="48.6" min="0" max="100" step="any" class="visually-hidden" tabindex="-1" />
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Service history</legend>
+            <div class="field-grid">
+              <label>Failure history<input type="number" id="m-failures" value="10" min="0" max="100" /></label>
+              <label>Anomalies detected<input type="number" id="m-anomalies" value="7" min="0" max="100" /></label>
+              <label>Diagnostic trouble codes<input type="number" id="m-dtc" value="8" min="0" max="100" /></label>
+              <label>Last maintenance type<select id="m-mtype"></select></label>
+              <label>Brake condition<select id="m-brake"><option>Good</option><option>Fair</option><option selected>Poor</option></select></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Service note</legend>
+            <label class="full">Free text from the driver or service desk
+              <textarea id="m-note" rows="4" maxlength="2000">Driver reports brake vibration and an overheat smell near the wheel, ERR-431. Pads last replaced at 184,000 miles.</textarea>
+            </label>
+            <p class="field-help">Regex extraction pulls error codes, part numbers, mileage and urgency keywords. The text is not fed to the classifier.</p>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit" class="button primary" id="maintenance-submit">Score vehicle</button>
+            <button type="reset" class="button ghost">Reset</button>
+          </div>
+        </form>
+
+        <aside class="result-column" aria-live="polite">
+          <div class="card result-card" id="maintenance-result">
+            <div class="empty-state">
+              <div class="empty-mark">01</div>
+              <h2>Awaiting a record</h2>
+              <p>Submit the form to see a calibrated probability, the decision threshold, the drivers behind the score and the parsed service note.</p>
+            </div>
+          </div>
+          <div class="card caveat-card">
+            <p class="eyebrow">Read this before quoting the number</p>
+            <p>The public dataset is synthetic and encodes maintenance need as a deterministic function of service age and telemetry, so holdout discrimination is near-perfect. The pipeline excludes days-since-service, severity, cost and every post-service field. Re-validate on real fleet data before operational use.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- FREIGHT -->
+    <section class="panel" id="panel-freight" aria-labelledby="freight-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Model 02 · regression</p>
+          <h1 id="freight-title">Freight quote</h1>
+          <p class="lede narrow">Booking-time attributes only. The model optimises absolute error and returns a split-conformal 90% interval, not a single confident number.</p>
+        </div>
+        <button class="button ghost small" id="load-shipment">Use a recent shipment</button>
+      </div>
+
+      <div class="grid form-layout">
+        <form class="card form-card" id="freight-form" autocomplete="off">
+          <fieldset>
+            <legend>Lane</legend>
+            <div class="field-grid">
+              <label>Origin warehouse<select id="f-origin"></select></label>
+              <label>Destination<select id="f-destination"></select></label>
+              <label>Carrier<select id="f-carrier"></select></label>
+              <label>Shipment date<input type="date" id="f-date" value="2025-03-18" /></label>
+              <label>Weight (kg)<input type="number" id="f-weight" value="38.9" min="0" step="any" /></label>
+              <label>Distance (miles)<input type="number" id="f-distance" value="1225" min="0" step="any" /></label>
+            </div>
+          </fieldset>
+          <div class="form-actions">
+            <button type="submit" class="button primary" id="freight-submit">Quote shipment</button>
+            <button type="reset" class="button ghost">Reset</button>
+          </div>
+          <div class="card inset" id="lane-benchmark-card">
+            <p class="eyebrow">Lane benchmark</p>
+            <p class="muted" id="lane-benchmark-empty">Choose a lane to compare the quote against observed shipments.</p>
+          </div>
+        </form>
+
+        <aside class="result-column" aria-live="polite">
+          <div class="card result-card" id="freight-result">
+            <div class="empty-state">
+              <div class="empty-mark">02</div>
+              <h2>No quote yet</h2>
+              <p>Submit a lane and shipment weight. The result includes a point estimate, a 90% interval, cost per mile and the observed lane benchmark.</p>
+            </div>
+          </div>
+          <div class="card caveat-card">
+            <p class="eyebrow">How to read the interval</p>
+            <p>The 90% interval comes from absolute residuals on the validation split. It widens for unusual lanes and heavy shipments. A quote is a planning aid, not a booked rate.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- PRIORITY -->
+    <section class="panel" id="panel-priority" aria-labelledby="priority-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Operations · scored queue</p>
+          <h1 id="priority-title">Priority queue</h1>
+          <p class="lede narrow">The warehouse ranks candidates with an explainable heuristic, then the maintenance model re-scores them. Click a row for the full record and drivers.</p>
+        </div>
+        <div class="filter-group" role="group" aria-label="Filter by risk level">
+          <button class="chip is-active" data-filter="all">All</button>
+          <button class="chip" data-filter="critical">Critical</button>
+          <button class="chip" data-filter="high">High</button>
+          <button class="button ghost small" id="rescore-queue">Rescore</button>
+        </div>
+      </div>
+
+      <article class="card table-card">
+        <div class="table-scroll">
+          <table class="data-table" id="priority-table">
+            <thead>
+              <tr>
+                <th>Vehicle</th><th>Type</th><th>Usage</th><th>Brakes</th><th>Failures</th><th>Top signal</th><th>Risk</th><th>Observed</th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="8" class="loading-row">Scoring the fleet…</td></tr></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- MONITORING -->
+    <section class="panel" id="panel-monitoring" aria-labelledby="monitoring-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Operations · model health</p>
+          <h1 id="monitoring-title">Monitoring</h1>
+          <p class="lede narrow">Population stability against the training reference, prediction traffic, and accuracy from operator feedback.</p>
+        </div>
+        <button class="button ghost small" id="refresh-monitoring">Refresh report</button>
+      </div>
+
+      <div class="grid two" id="model-cards"></div>
+
+      <div class="grid two">
+        <article class="card">
+          <div class="card-head">
+            <div><p class="eyebrow">Input drift</p><h2>Population stability index</h2></div>
+            <div class="inline-controls">
+              <select id="drift-model" aria-label="Drift model">
+                <option value="all">Both models</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="freight">Freight</option>
+              </select>
+              <select id="drift-window" aria-label="Drift window">
+                <option value="100">100 requests</option>
+                <option value="500" selected>500 requests</option>
+                <option value="2000">2,000 requests</option>
+              </select>
+            </div>
+          </div>
+          <div id="drift-report" class="drift-report"><p class="muted">Collecting the live window…</p></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div><p class="eyebrow">Traffic</p><h2>Prediction log</h2></div>
+            <span class="card-tag">24h</span>
+          </div>
+          <div id="traffic" class="stack"><p class="muted">Loading traffic…</p></div>
+          <div class="divider"></div>
+          <div class="card-head tight"><div><p class="eyebrow">Feedback</p><h2>Observed accuracy</h2></div></div>
+          <div id="feedback-summary" class="stack"><p class="muted">No labelled predictions yet.</p></div>
+        </article>
+      </div>
+
+      <article class="card table-card">
+        <div class="card-head">
+          <div><p class="eyebrow">Audit trail</p><h2>Recent predictions</h2></div>
+          <span class="card-tag">newest first</span>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="recent-events">
+            <thead><tr><th>When</th><th>Endpoint</th><th>Model</th><th>Latency</th><th>Score</th><th>Observed</th><th>Feedback</th></tr></thead>
+            <tbody><tr><td colspan="7" class="loading-row">Loading events…</td></tr></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong>FleetIQ</strong> · maintenance risk + freight pricing
+      <span class="footer-sep">/</span> FastAPI · MLflow · Prefect · SQLAlchemy
+    </div>
+    <div class="footer-links">
+      <a href="/docs" target="_blank" rel="noreferrer">API docs</a>
+      <a href="/api/health" target="_blank" rel="noreferrer">Health</a>
+      <a href="/metrics" target="_blank" rel="noreferrer">Metrics</a>
+      <span id="footer-version">v1.0.0</span>
+    </div>
+  </footer>
+
+  <dialog id="vehicle-dialog" class="dialog">
+    <div class="dialog-head">
+      <div><p class="eyebrow">Vehicle detail</p><h2 id="dialog-title">Vehicle</h2></div>
+      <button class="icon-button" id="dialog-close" aria-label="Close dialog">×</button>
+    </div>
+    <div id="dialog-body" class="dialog-body"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

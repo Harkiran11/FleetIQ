@@ -1,0 +1,45 @@
+# --- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# --- Tooling ----------------------------------------------------------------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# --- Local configuration ----------------------------------------------------
+.env
+.env.local
+
+# --- Data -------------------------------------------------------------------
+# Raw CSVs are large and are downloaded separately. The small, deterministic
+# fixtures used by the test suite are intentionally kept:
+#   data/test_fleetiq.db
+archive/
+/logistics_shipments_dataset.csv
+data/fleetiq.db
+data/raw/*.csv
+data/processed/*.json
+data/processed/*.parquet
+data/test_mlflow.db
+
+# --- Tracking and artefacts -------------------------------------------------
+mlflow.db
+mlruns/
+models_test_ml/
+models/*/runs/
+
+# --- OS / editor ------------------------------------------------------------
+.DS_Store
+.idea/
+.vscode/
+*.swp

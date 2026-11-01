@@ -1,0 +1,24 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.coverage
+htmlcov
+.DS_Store
+
+# Large local data never belongs in an image. Compose mounts data/raw for the
+# bootstrap job and models/ for the API.
+data
+archive
+*.csv
+mlruns
+mlflow.db
+models_test
+models_test_ml
+docs
+tests
+.github

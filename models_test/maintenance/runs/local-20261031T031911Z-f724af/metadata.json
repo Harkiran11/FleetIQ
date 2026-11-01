@@ -1,0 +1,332 @@
+{
+  "model_key": "maintenance",
+  "model_name": "fleetiq-maintenance-risk",
+  "title": "FleetIQ Maintenance Risk",
+  "run_id": "local-20261031T031911Z-f724af",
+  "trained_at": "2026-10-31T03:19:11.560260+00:00",
+  "reference_year": 2025,
+  "training_rows": 3517,
+  "validation_rows": 511,
+  "test_rows": 972,
+  "target_rate": 0.2988342337219221,
+  "feature_columns": [
+    "usage_hours",
+    "load_capacity",
+    "actual_load",
+    "engine_temperature",
+    "tire_pressure",
+    "fuel_consumption",
+    "battery_status",
+    "vibration_levels",
+    "oil_quality",
+    "failure_history",
+    "anomalies_detected",
+    "diagnostic_trouble_code_count",
+    "can_message_rate_hz",
+    "sensor_packet_loss_rate",
+    "historical_maintenance_cost",
+    "vehicle_age",
+    "usage_per_year",
+    "load_ratio",
+    "temp_delta",
+    "vibration_per_1k_hours",
+    "dtc_per_10k_hours",
+    "packet_loss_pct",
+    "maintenance_cost_per_hour",
+    "brake_wear_flag",
+    "failure_flag",
+    "anomaly_flag",
+    "make_and_model",
+    "vehicle_type",
+    "route_info",
+    "weather_conditions",
+    "road_conditions",
+    "communication_interface",
+    "telematics_gateway",
+    "edge_device_class",
+    "maintenance_type",
+    "brake_condition"
+  ],
+  "numeric_features": [
+    "usage_hours",
+    "load_capacity",
+    "actual_load",
+    "engine_temperature",
+    "tire_pressure",
+    "fuel_consumption",
+    "battery_status",
+    "vibration_levels",
+    "oil_quality",
+    "failure_history",
+    "anomalies_detected",
+    "diagnostic_trouble_code_count",
+    "can_message_rate_hz",
+    "sensor_packet_loss_rate",
+    "historical_maintenance_cost",
+    "vehicle_age",
+    "usage_per_year",
+    "load_ratio",
+    "temp_delta",
+    "vibration_per_1k_hours",
+    "dtc_per_10k_hours",
+    "packet_loss_pct",
+    "maintenance_cost_per_hour",
+    "brake_wear_flag",
+    "failure_flag",
+    "anomaly_flag"
+  ],
+  "categorical_features": [
+    "make_and_model",
+    "vehicle_type",
+    "route_info",
+    "weather_conditions",
+    "road_conditions",
+    "communication_interface",
+    "telematics_gateway",
+    "edge_device_class",
+    "maintenance_type",
+    "brake_condition"
+  ],
+  "excluded_columns": [
+    "ads",
+    "cmes",
+    "data_split",
+    "days_since_last_maintenance",
+    "downtime_maintenance",
+    "impact_on_efficiency",
+    "last_maintenance_date",
+    "maintenance_cost",
+    "maintenance_severity",
+    "maintenance_severity_id",
+    "mbf",
+    "ohi",
+    "pcr",
+    "pre_event_record",
+    "predictive_score",
+    "tpi",
+    "uer",
+    "uir"
+  ],
+  "threshold": 0.9999127369371157,
+  "metrics": {
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "accuracy": 1.0,
+    "brier": 3.1818756101110824e-09,
+    "log_loss": 5.1664639394693874e-05
+  },
+  "baseline_metrics": {
+    "roc_auc": 0.5,
+    "pr_auc": 0.2880658436213992,
+    "f1": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "accuracy": 0.7119341563786008,
+    "brier": 0.2051998715854478,
+    "log_loss": 0.6006894339320538
+  },
+  "params": {
+    "max_iter": 350,
+    "learning_rate": 0.06,
+    "max_leaf_nodes": 31,
+    "l2_regularization": 1.0,
+    "early_stopping": true,
+    "reference_year": 2025,
+    "train_rows": 3517,
+    "validation_rows": 511,
+    "test_rows": 972,
+    "feature_count": 36
+  },
+  "segments": {
+    "vehicle_type": [
+      {
+        "segment": "Light Truck",
+        "rows": 211,
+        "positive_rate": 0.22748815165876776,
+        "mean_prediction": 0.22749708291542114,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Refrigerated Truck",
+        "rows": 207,
+        "positive_rate": 0.25120772946859904,
+        "mean_prediction": 0.251213707128292,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Electric Truck",
+        "rows": 194,
+        "positive_rate": 0.29896907216494845,
+        "mean_prediction": 0.29896910251150854,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Heavy Truck",
+        "rows": 180,
+        "positive_rate": 0.37222222222222223,
+        "mean_prediction": 0.37221313097804054,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Medium Truck",
+        "rows": 180,
+        "positive_rate": 0.3055555555555556,
+        "mean_prediction": 0.30555476574344853,
+        "f1": 1.0,
+        "auc": 1.0
+      }
+    ],
+    "brake_condition": [
+      {
+        "segment": "Good",
+        "rows": 598,
+        "positive_rate": 0.08862876254180602,
+        "mean_prediction": 0.08865498477525946,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Fair",
+        "rows": 269,
+        "positive_rate": 0.45353159851301117,
+        "mean_prediction": 0.4535123825048649,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Poor",
+        "rows": 105,
+        "positive_rate": 1.0,
+        "mean_prediction": 0.9999127369371158,
+        "f1": 1.0,
+        "auc": null
+      }
+    ],
+    "route_info": [
+      {
+        "segment": "Urban Delivery",
+        "rows": 204,
+        "positive_rate": 0.2549019607843137,
+        "mean_prediction": 0.2549074784328516,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Cold-Chain Route",
+        "rows": 200,
+        "positive_rate": 0.295,
+        "mean_prediction": 0.2950005245813048,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Intercity Logistics",
+        "rows": 199,
+        "positive_rate": 0.32663316582914576,
+        "mean_prediction": 0.32662975140178896,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Port-to-Warehouse",
+        "rows": 195,
+        "positive_rate": 0.3128205128205128,
+        "mean_prediction": 0.3128188183651669,
+        "f1": 1.0,
+        "auc": 1.0
+      },
+      {
+        "segment": "Highway Freight",
+        "rows": 174,
+        "positive_rate": 0.2471264367816092,
+        "mean_prediction": 0.24713292264991238,
+        "f1": 1.0,
+        "auc": 1.0
+      }
+    ]
+  },
+  "global_importance": [
+    {
+      "feature": "maintenance_type",
+      "importance": 0.49563170933113126
+    },
+    {
+      "feature": "usage_hours",
+      "importance": 0.0
+    },
+    {
+      "feature": "load_capacity",
+      "importance": 0.0
+    },
+    {
+      "feature": "actual_load",
+      "importance": 0.0
+    },
+    {
+      "feature": "engine_temperature",
+      "importance": 0.0
+    },
+    {
+      "feature": "tire_pressure",
+      "importance": 0.0
+    },
+    {
+      "feature": "fuel_consumption",
+      "importance": 0.0
+    },
+    {
+      "feature": "battery_status",
+      "importance": 0.0
+    },
+    {
+      "feature": "vibration_levels",
+      "importance": 0.0
+    },
+    {
+      "feature": "oil_quality",
+      "importance": 0.0
+    },
+    {
+      "feature": "failure_history",
+      "importance": 0.0
+    },
+    {
+      "feature": "anomalies_detected",
+      "importance": 0.0
+    },
+    {
+      "feature": "diagnostic_trouble_code_count",
+      "importance": 0.0
+    },
+    {
+      "feature": "can_message_rate_hz",
+      "importance": 0.0
+    },
+    {
+      "feature": "sensor_packet_loss_rate",
+      "importance": 0.0
+    }
+  ],
+  "dataset": {
+    "source": "logistics_predictive_maintenanceV2.csv",
+    "fingerprint": "068d92c931e0e708",
+    "target": "maintenance_required",
+    "target_rate": 0.2988342337219221
+  },
+  "mlflow": {
+    "tracking_uri": "sqlite:///./mlflow.db",
+    "experiment": "fleetiq-maintenance-risk",
+    "registered_model": "fleetiq-maintenance-risk",
+    "version": null
+  },
+  "intended_use": "Rank vehicles for scheduled maintenance using telemetry and the last known service state.",
+  "limitations": "The public dataset is synthetic and encodes maintenance need as a deterministic function of service age and telemetry. Discrimination is therefore near-perfect. Days since last maintenance, severity, cost and post-service fields are excluded to avoid direct leakage. Re-validate on real fleet data before operational use.",
+  "error_analysis": []
+}
