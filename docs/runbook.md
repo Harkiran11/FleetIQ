@@ -206,8 +206,8 @@ Status meanings:
 | Status | Action |
 | --- | --- |
 | `stable` | No action |
-| `watch` | Inspect `top_drifted`; check upstream data quality |
-| `alert` | Investigate immediately; consider retraining or a rollback |
+| `watch` | Inspect `top_drifted`. Check upstream data quality. |
+| `alert` | Investigate immediately. Consider retraining or a rollback. |
 | `insufficient_data` | Wait for at least 25 requests |
 
 ### Triage order
@@ -335,7 +335,7 @@ Back up both the store and the artifacts. A registry version without its artifac
 
 ### Model bundles
 
-`models/<key>/current/` is self-contained. Copying that directory is enough to serve the model on another host. `models/<key>/runs/` is history; it is excluded from git but useful for rollback.
+`models/<key>/current/` is self-contained. Copying that directory is enough to serve the model on another host. `models/<key>/runs/` is history. It is excluded from git but useful for rollback.
 
 ---
 
@@ -362,7 +362,7 @@ One model loaded and the other did not. This is intentional: the service can sti
 
 ### `422` on a prediction
 
-The payload has an unknown field or an out-of-range value. Read the `loc` in the error. A common cause is sending `maintenance_cost` or a post-delivery freight field; both are rejected by design.
+The payload has an unknown field or an out-of-range value. Read the `loc` in the error. A common cause is sending `maintenance_cost` or a post-delivery freight field. Both are rejected by design.
 
 ### `413` on a batch
 
@@ -433,7 +433,7 @@ Then retrain with `MODEL_DIR=models_test` and promote the bundles. The test fixt
 
 - Set `ADMIN_TOKEN` in any shared environment. Without it, `/api/admin/reload` is open.
 - The API does not implement authentication for prediction or analytics endpoints. Put it behind an authenticating proxy if it is exposed.
-- CORS is restricted by `CORS_ORIGINS`; the default is local development.
+- CORS is restricted by `CORS_ORIGINS`. The default is local development.
 - The container runs as a non-root user (UID 10001).
 - Request bodies are bounded by the batch limit and Pydantic field constraints, but there is no global request-size limit. Add one at the proxy for public deployments.
 - The feedback endpoint trusts the caller's label. In production, labels should come from an authenticated warehouse job.

@@ -63,7 +63,7 @@ max_batch_size = 500
 
 ## 2. Database layer
 
-`src/db.py` builds a SQLAlchemy engine with `pool_pre_ping`, a session factory, a `session_scope()` context manager, and an `init_db()` helper. SQLite gets `check_same_thread=False`; in-memory SQLite uses `StaticPool` so tests share one connection.
+`src/db.py` builds a SQLAlchemy engine with `pool_pre_ping`, a session factory, a `session_scope()` context manager, and an `init_db()` helper. SQLite gets `check_same_thread=False`. In-memory SQLite uses `StaticPool` so tests share one connection.
 
 `src/db_models.py` defines four tables with SQLAlchemy 2 typed mappings:
 
@@ -191,13 +191,13 @@ The parser is tested with a realistic note and a benign note. It returns a struc
 
 The same module contains read-only SQL helpers used by the dashboard:
 
-- `segment_risk` — risk rate by vehicle type
-- `monthly_maintenance` — service volume and risk rate by month
-- `lane_statistics` — busiest lanes with cost and distance
-- `lane_benchmark` — p25/median/p75 cost for one lane
-- `carrier_statistics` — cost comparison by carrier
-- `brake_condition_stats` — risk rate by brake condition
-- `fetch_maintenance_frame` — a raw frame for drift windows
+- `segment_risk`: risk rate by vehicle type
+- `monthly_maintenance`: service volume and risk rate by month
+- `lane_statistics`: busiest lanes with cost and distance
+- `lane_benchmark`: p25/median/p75 cost for one lane
+- `carrier_statistics`: cost comparison by carrier
+- `brake_condition_stats`: risk rate by brake condition
+- `fetch_maintenance_frame`: a raw frame for drift windows
 
 Keeping SQL here means the routers stay thin and the queries can be tested against the fixture database without HTTP.
 

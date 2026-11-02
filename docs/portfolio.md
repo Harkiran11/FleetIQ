@@ -1,27 +1,48 @@
 # Portfolio Notes
 
-This page is for the human side of the project: how to describe it on a resume, what to emphasize in an interview, and which details are worth defending.
+This page covers the human side of the project: how to describe it on a resume, what to emphasize in an interview, and which details are worth defending.
+
+Repository: <https://github.com/Harkiran11/FleetIQ>
 
 ---
 
 ## 1. One-line summary
 
-> Built an end-to-end MLOps system for fleet maintenance risk and freight pricing: 250k-row ingestion, leakage-safe feature engineering, MLflow tracking and registry, Prefect orchestration, FastAPI serving, PSI drift monitoring, a custom operations dashboard, 111 tests, and Docker deployment.
+> Built an end-to-end MLOps platform for a 250,000-vehicle logistics fleet, covering ingestion, leakage-safe features, MLflow registry promotion, FastAPI serving, drift monitoring, and Docker deployment.
+
+Shorter version for a resume header:
+
+> End-to-end MLOps platform for fleet maintenance risk and freight pricing, trained on 250,000 records and served at a p95 latency under 30 ms.
 
 ---
 
 ## 2. Resume bullets
 
-Pick three or four; do not use all of them.
+Pick three or four bullets. Each one leads with an action and ends with a number.
 
-- Designed and shipped an end-to-end MLOps pipeline for a 250,000-vehicle logistics dataset, covering ingestion, validation, feature engineering, training, evaluation, registry promotion, and FastAPI serving.
-- Built a leakage-safe maintenance risk model (HistGradientBoosting) with a tuned decision threshold and explainability signals; documented the synthetic-data caveat instead of presenting near-perfect metrics as production performance.
-- Trained a freight pricing model with absolute-error loss and split-conformal 90% prediction intervals, achieving $13.15 MAE and 90.1% empirical coverage on a held-out test set.
-- Implemented MLflow experiment tracking and a model registry with versioned runs, `champion` aliases, model cards, and local bundle promotion; added a quality gate that blocks promotion on AUC or MAPE regressions.
-- Built PSI-based drift monitoring against stored training distributions, a prediction event log, a human feedback loop, and Prometheus text metrics.
-- Delivered a dependency-free operations dashboard (HTML/CSS/JS, bundled fonts) with a custom design system, achieving Lighthouse 1.0 for accessibility, best practices, and SEO.
-- Containerized the stack with PostgreSQL, MLflow, Gunicorn/Uvicorn, health checks, and a non-root image; added a Compose bootstrap job for ingest and retraining.
-- Wrote 111 pytest tests with fixtures isolated from the production warehouse, plus ruff lint/format and a GitHub Actions CI workflow.
+### Recommended set
+
+- Built an end-to-end MLOps platform for a 250,000-vehicle logistics fleet, covering ingestion, feature engineering, model training, MLflow registry promotion, FastAPI serving, and drift monitoring.
+- Trained a freight pricing model that reduced mean absolute error from $30.02 to $13.15, a 56% improvement, with 90% prediction intervals that achieved 90.1% empirical coverage.
+- Built a maintenance risk classifier that reached 1.00 F1 and 1.00 ROC AUC on a 50,000-row held-out set, after removing 18 post-service and leakage columns that would have inflated the result.
+- Added prediction logging, PSI drift monitoring, and a plain HTML/CSS/JS operations dashboard, backed by 111 pytest tests and a GitHub Actions pipeline for lint, tests, and Docker smoke tests.
+
+### Alternate bullets
+
+Use these when a job description emphasizes a specific area.
+
+- Shipped a FastAPI service with 16 endpoints, batch scoring for up to 500 records per request, Pydantic contracts, and p95 inference latency of 24.5 ms for maintenance and 27.5 ms for freight.
+- Implemented MLflow experiment tracking and a model registry with versioned runs, `champion` aliases, model cards, and a quality gate that blocks promotion when AUC or MAPE regresses.
+- Containerized the stack with PostgreSQL, MLflow, Gunicorn, health checks, and a non-root image, then added a Compose bootstrap job for ingestion and retraining.
+- Delivered an operations dashboard with Lighthouse scores of 1.0 for accessibility, best practices, and SEO, with no frontend framework or build step.
+
+### Skills line
+
+`Python, scikit-learn, MLflow, Prefect, FastAPI, SQLAlchemy, PostgreSQL, SQLite, Docker, pytest, GitHub Actions, HTML/CSS/JavaScript`
+
+### What makes the numbers credible
+
+The freight numbers come from a held-out test set of 294 shipments. The maintenance numbers come from a 50,000-row test split. Both are reproduced by `python -m src.cli evaluate`. The maintenance dataset is synthetic, so the resume bullet states the leakage work and the held-out size instead of implying that a perfect score would transfer to production.
 
 ---
 
@@ -29,7 +50,7 @@ Pick three or four; do not use all of them.
 
 > "FleetIQ is a maintenance and pricing system for a logistics fleet. The raw data is 250,000 vehicle records and 2,000 shipments. I built the whole path: ingestion into a SQLAlchemy warehouse, shared feature builders used by both training and serving, MLflow tracking and a model registry, Prefect flows, a FastAPI service, and a dashboard.
 >
-> The maintenance model is a histogram gradient boosting classifier. The public dataset is synthetic, so the metrics are near-perfect; the interesting work was making sure the model does not cheat. I explicitly excluded the post-service fields like days since last maintenance, severity, cost, and predictive score, and I documented that caveat in the model card. The freight model is a gradient boosting regressor with absolute-error loss and a split-conformal interval; it gets about 7.4% MAPE and 90% interval coverage.
+> The maintenance model is a histogram gradient boosting classifier. The public dataset is synthetic, so the metrics are near-perfect. The interesting work was making sure the model does not cheat. I explicitly excluded the post-service fields like days since last maintenance, severity, cost, and predictive score, and I documented that caveat in the model card. The freight model is a gradient boosting regressor with absolute-error loss and a split-conformal interval. It gets about 7.4% MAPE and 90% interval coverage.
 >
 > Operationally, every prediction is logged with its request, response, latency, and model version. Drift is measured with PSI against the training distribution, with a minimum window so the dashboard does not overreact. The API can serve local bundles or pull the champion from MLflow. The whole thing runs locally with SQLite or in Docker with PostgreSQL and an MLflow server. There are 111 tests and the suite runs in about three seconds."
 
@@ -51,11 +72,11 @@ The honest conclusion is that the pipeline is correct, not that the model would 
 
 ### "Why histogram gradient boosting instead of XGBoost or a neural network?"
 
-The dataset is tabular, the signal is mostly monotonic and interaction-heavy, and the rows fit comfortably in memory. HistGradientBoosting is fast, handles missing values natively, supports categorical features, and has no extra native dependency. XGBoost would also work; a neural network would add tuning and preprocessing cost without an obvious benefit at this size.
+The dataset is tabular, the signal is mostly monotonic and interaction-heavy, and the rows fit comfortably in memory. HistGradientBoosting is fast, handles missing values natively, supports categorical features, and has no extra native dependency. XGBoost would also work. A neural network would add tuning and preprocessing cost without an obvious benefit at this size.
 
 ### "Why not a feature store?"
 
-At this scale, the shared Python feature builders are enough. A feature store becomes worth the operational cost when multiple teams need the same features with different freshness requirements. The project is structured so that the feature contract is centralized in `src/features.py`; moving it behind a service later would not require rewriting training or serving.
+At this scale, the shared Python feature builders are enough. A feature store becomes worth the operational cost when multiple teams need the same features with different freshness requirements. The project is structured so that the feature contract is centralized in `src/features.py`. Moving it behind a service later would not require rewriting training or serving.
 
 ### "How do you prevent train/serve skew?"
 
@@ -81,7 +102,7 @@ The 0.9 residual quantile is computed on the validation set, and the test covera
 
 ### "Why is the dashboard not React?"
 
-The API is the product surface; the dashboard is a thin client over typed endpoints. A framework would add a build step, a Node dependency, and a second deployment artifact without changing the user experience. The current UI is about 3,000 lines of HTML/CSS/JS and loads instantly. If the frontend grew into a multi-team product, the next step would be a typed client and a component library, not a rewrite of the serving contract.
+The API is the product surface. The dashboard is a thin client over typed endpoints. A framework would add a build step, a Node dependency, and a second deployment artifact without changing the user experience. The current UI is about 3,000 lines of HTML/CSS/JS and loads instantly. If the frontend grew into a multi-team product, the next step would be a typed client and a component library, not a rewrite of the serving contract.
 
 ---
 
@@ -109,7 +130,7 @@ The API is the product surface; the dashboard is a thin client over typed endpoi
 
 **Result:** The UI shows a meaningful spread of risk levels without changing the model's decision boundary.
 
-**What it shows:** Model behavior and product behavior are different concerns; a correct number can still produce a bad interface.
+**What it shows:** Model behavior and product behavior are different concerns. A correct number can still produce a bad interface.
 
 ### Story: the form that would not submit
 
@@ -168,6 +189,6 @@ Keep the caveat ready: the maintenance metrics are a property of the synthetic d
 
 - Do not claim the maintenance model is production-ready.
 - Do not claim the freight model generalizes beyond the 2023 US lane mix.
-- Do not claim the PSI implementation is a full drift platform; it is a focused, tested monitor.
-- Do not claim the dashboard is a design system for a team; it is a deliberate single-product UI.
+- Do not claim the PSI implementation is a full drift platform. It is a focused, tested monitor.
+- Do not claim the dashboard is a design system for a team. It is a deliberate single-product UI.
 - Do not claim the project handles streaming or online learning. It is batch training plus online serving.

@@ -162,7 +162,7 @@ pcr · uir · tpi · mbf · ads · ohi · cmes · uer
 pre_event_record
 ```
 
-`days_since_last_maintenance` is effectively the target. `maintenance_severity` and `predictive_score` are outcomes. `maintenance_cost` and downtime are recorded after service. The reliability indices are derived from post-service state. `data_split` is the dataset's own split label; the project re-splits deterministically from the cleaned frame so the test set is never used for tuning.
+`days_since_last_maintenance` is effectively the target. `maintenance_severity` and `predictive_score` are outcomes. `maintenance_cost` and downtime are recorded after service. The reliability indices are derived from post-service state. `data_split` is the dataset's own split label. The project re-splits deterministically from the cleaned frame so the test set is never used for tuning.
 
 The exclusion list is asserted by `test_feature_contract_has_no_leakage_columns`.
 
@@ -186,7 +186,7 @@ The exclusion list is asserted by `test_feature_contract_has_no_leakage_columns`
 - Risk keywords (`brake`, `overheat`, `vibration`, `leak`, `smoke`, `steering`, ...)
 - An urgency score and band (`low`, `medium`, `high`)
 
-The result is returned alongside the model score and used by `_action()` to escalate the recommendation. It is not fed into the tree model; that keeps the model contract numeric/categorical and makes the text behavior easy to test and explain.
+The result is returned alongside the model score and used by `_action()` to escalate the recommendation. It is not fed into the tree model. That keeps the model contract numeric/categorical and makes the text behavior easy to test and explain.
 
 ---
 
@@ -209,7 +209,7 @@ ColumnTransformer
   )
 ```
 
-A logistic-regression baseline with one-hot encoding is trained on the same split. The baseline is not promoted; it exists to make the lift visible in MLflow and the model card.
+A logistic-regression baseline with one-hot encoding is trained on the same split. The baseline is not promoted. It exists to make the lift visible in MLflow and the model card.
 
 ### Split strategy
 
@@ -263,11 +263,11 @@ If either gate fails, training raises and the run is not promoted. The gate is d
 
 Each run writes:
 
-- `model.joblib` — the fitted sklearn pipeline
-- `metadata.json` — model name, run ID, feature lists, metrics, params, segments, importance, limitations, intended use, MLflow version
-- `reference_stats.json` — numeric bin edges/shares and categorical frequencies for PSI
-- `model_card.md` — human-readable governance summary
-- Evaluation plots — calibration, confusion matrix, importance, residuals
+- `model.joblib`: the fitted sklearn pipeline
+- `metadata.json`: model name, run ID, feature lists, metrics, params, segments, importance, limitations, intended use, MLflow version
+- `reference_stats.json`: numeric bin edges/shares and categorical frequencies for PSI
+- `model_card.md`: human-readable governance summary
+- Evaluation plots: calibration, confusion matrix, importance, residuals
 
 Bundles live at `models/<key>/runs/<run_id>/`. Promotion copies the chosen run to `models/<key>/current/` and writes `models/<key>/current.json` with the run ID and timestamp.
 
@@ -288,7 +288,7 @@ The local serving path does not need MLflow at runtime. `MODEL_SOURCE=mlflow` is
 
 `LoadedModel` exposes `pipeline`, `metadata`, `reference_stats`, `threshold`, `residual_quantiles`, `feature_columns`, `numeric_features`, and `categorical_features`. The API only depends on this interface, not on the storage backend.
 
-`ModelRegistry` loads both keys at startup, records per-key errors, and exposes `available()`, `errors()`, and `info()`. A missing freight bundle does not prevent maintenance scoring. `/api/ready` returns 503 until both are available; `/api/health` stays 200 so the container can report the partial state.
+`ModelRegistry` loads both keys at startup, records per-key errors, and exposes `available()`, `errors()`, and `info()`. A missing freight bundle does not prevent maintenance scoring. `/api/ready` returns 503 until both are available. `/api/health` stays 200 so the container can report the partial state.
 
 `src/predict.py` contains the inference logic:
 
@@ -319,7 +319,7 @@ The multipliers keep the bands meaningful when the threshold is near 1. The resp
 
 The app mounts `frontend/` at `/static`, serves `index.html` at `/`, and exposes routers under `/api`.
 
-Prediction requests are timed with `perf_counter`. `api/deps.py` writes a `prediction_events` row with the request, response, latency, model name/version/run ID, risk probability or predicted cost, and a coarse client label. If prediction logging is disabled, the endpoint still returns the response; it simply skips the insert.
+Prediction requests are timed with `perf_counter`. `api/deps.py` writes a `prediction_events` row with the request, response, latency, model name/version/run ID, risk probability or predicted cost, and a coarse client label. If prediction logging is disabled, the endpoint still returns the response. It simply skips the insert.
 
 Batch endpoints process records independently. A bad row becomes an entry in `errors` rather than failing the whole batch. The maximum batch size is `MAX_BATCH_SIZE` (default 500), enforced before any inference.
 
@@ -362,7 +362,7 @@ A window below 25 requests returns `insufficient_data` instead of a misleading s
 - Maintenance: accuracy at 0.5, plus the count of labelled events
 - Freight: MAE and MAPE on labelled quotes
 
-The feedback endpoint is intentionally simple. A real system would ingest labels from a warehouse job; the API shape would stay the same.
+The feedback endpoint is intentionally simple. A real system would ingest labels from a warehouse job. The API shape would stay the same.
 
 ### Prometheus
 
@@ -374,14 +374,14 @@ The feedback endpoint is intentionally simple. A real system would ingest labels
 
 `src/pipeline.py` defines Prefect 3 flows:
 
-- `refresh_flow` — ingest, train, evaluate
-- `ingest_flow` — ingest only
-- `train_flow` — train only
-- `monitor_flow` — drift and feedback summary
+- `refresh_flow`: ingest, train, evaluate
+- `ingest_flow`: ingest only
+- `train_flow`: train only
+- `monitor_flow`: drift and feedback summary
 
 Each flow calls the same functions as the CLI. Deployments use cron schedules and are created with `python -m src.pipeline --serve` or the CLI `pipeline` command.
 
-The orchestration layer is thin on purpose. Prefect owns scheduling, retries, and observability; the domain logic stays testable without a Prefect server.
+The orchestration layer is thin on purpose. Prefect owns scheduling, retries, and observability. The domain logic stays testable without a Prefect server.
 
 ---
 
@@ -410,14 +410,14 @@ The same image can run on ECS, Cloud Run, or Kubernetes. The only environment ch
 
 | Failure | Behavior |
 | --- | --- |
-| Missing model bundle | Registry records the error; `/api/ready` returns 503; prediction returns 503 for that model |
-| Empty warehouse | API still boots; analytics return zeros; entrypoint can ingest |
-| Bad batch row | Row is reported in `errors`; the rest of the batch succeeds |
+| Missing model bundle | Registry records the error. `/api/ready` and the affected prediction route return 503. |
+| Empty warehouse | API still boots. Analytics return zeros. Entrypoint can ingest. |
+| Bad batch row | Row is reported in `errors`. The rest of the batch succeeds. |
 | Drift window too small | Status is `insufficient_data`, not a false alert |
-| MLflow unavailable | Local bundles still serve; training with `--no-mlflow` still writes bundles |
-| Quality gate fails | Training raises; no promotion |
+| MLflow unavailable | Local bundles still serve. Training with `--no-mlflow` still writes bundles. |
+| Quality gate fails | Training raises and nothing is promoted. |
 | Admin token set | Reload requires `X-Admin-Token` |
-| S3 not configured | `StorageUnavailable` with a clear message; core serving unaffected |
+| S3 not configured | `StorageUnavailable` with a clear message. Core serving is unaffected. |
 
 ---
 

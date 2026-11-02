@@ -5,7 +5,7 @@ Base URL locally: `http://localhost:8000`
 Interactive docs: `http://localhost:8000/docs`  
 OpenAPI JSON: `http://localhost:8000/openapi.json`
 
-All canonical routes are under `/api`. Compatibility aliases exist at `/predict`, `/predict/freight`, `/health`, `/models`, and `/metrics`; they are intentionally hidden from the schema.
+All canonical routes are under `/api`. Compatibility aliases exist at `/predict`, `/predict/freight`, `/health`, `/models`, and `/metrics`. They are intentionally hidden from the schema.
 
 ---
 
@@ -14,7 +14,7 @@ All canonical routes are under `/api`. Compatibility aliases exist at `/predict`
 - Requests and responses are JSON unless noted.
 - Unknown request fields are rejected with `422`. This is deliberate: it prevents clients from sending leakage columns such as `maintenance_cost`.
 - Batch endpoints accept up to `MAX_BATCH_SIZE` records (default 500). Larger batches return `413`.
-- A missing model returns `503` for that model. `/api/health` stays `200`; `/api/ready` returns `503` until both models load.
+- A missing model returns `503` for that model. `/api/health` stays `200`. `/api/ready` returns `503` until both models load.
 - `POST /api/admin/reload` requires `X-Admin-Token` when `ADMIN_TOKEN` is set. Locally it is open.
 
 ---
@@ -127,7 +127,7 @@ fleetiq_prediction_latency_ms_avg{endpoint="/api/predict/maintenance"} 31.09
 
 Scores one vehicle.
 
-Every field is optional; the schema provides sensible defaults. The response includes a logged `prediction_id`.
+Every field is optional. The schema provides sensible defaults. The response includes a logged `prediction_id`.
 
 ```bash
 curl -s http://localhost:8000/api/predict/maintenance \
@@ -231,7 +231,7 @@ curl -s http://localhost:8000/api/predict/maintenance/batch \
 }
 ```
 
-A bad row is reported in `errors` with its index; the rest of the batch still succeeds. More than 500 rows returns `413`.
+A bad row is reported in `errors` with its index. The rest of the batch still succeeds. More than 500 rows returns `413`.
 
 ---
 

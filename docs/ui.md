@@ -2,7 +2,7 @@
 
 The dashboard is a single-page operations console served by FastAPI at `/`. It is plain HTML, CSS, and JavaScript. There is no React, no bundler, and no Node process in production.
 
-That choice is deliberate. The API contract is already typed and documented; the UI only needs to render it. A build step would add deployment surface without improving the product.
+That choice is deliberate. The API contract is already typed and documented. The UI only needs to render it. A build step would add deployment surface without improving the product.
 
 ## Screenshots
 
@@ -192,7 +192,7 @@ Lighthouse on the overview after the palette fixes:
 Accessibility     1.0
 Best Practices    1.0
 SEO               1.0
-Performance       (not benchmarked; local data)
+Performance       (not benchmarked, local data)
 ```
 
 ---
@@ -230,7 +230,7 @@ http://localhost:8000/?v=7
 - **No external CDN.** Fonts, CSS, and JS are local.
 - **No build step.** The files served are the files edited.
 - **No chart library.** Charts are CSS/SVG so the bundle stays small.
-- **No dark mode.** The warm paper palette is the identity; a dark theme would be a separate design, not an inversion.
+- **No dark mode.** The warm paper palette is the identity. A dark theme would be a separate design, not an inversion.
 - **No generic gradients.** The masthead and hero use layered petrol tones, not purple-blue SaaS gradients.
 - **No stock illustrations.** The visual interest comes from typography, grid, numbered cards, and data.
 
