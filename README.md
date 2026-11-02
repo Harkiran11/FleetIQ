@@ -48,7 +48,7 @@ The project covers the full path: warehouse, shared feature contract, experiment
 
 ## Results
 
-Both models are committed under `models/` with their metadata, model cards, and evaluation plots. MLflow tracked the runs during training, and the run IDs below match the bundles to the experiments.
+Both models are committed under `models/` with their metadata and model cards. Evaluation plots from the same runs are in `docs/images/`. MLflow tracked the runs during training, and the run IDs below match the bundles to the experiments.
 
 ### Maintenance risk
 
